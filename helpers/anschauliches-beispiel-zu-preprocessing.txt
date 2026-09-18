@@ -1,0 +1,56 @@
+from sklearn.preprocessing import MinMaxScaler, OrdinalEncoder
+
+# Define column groups
+standard_cols = ['income', 'score']
+minmax_cols = ['age', 'satisfaction']
+ordinal_cols = ['education']
+onehot_cols = ['size']
+
+# Create pipelines for each group
+standard_pipeline = Pipeline([
+    ('imputer', SimpleImputer(strategy='median')),
+    ('scaler', StandardScaler())
+])
+
+minmax_pipeline = Pipeline([
+    ('imputer', SimpleImputer(strategy='median')),
+    ('scaler', MinMaxScaler())
+])
+
+ordinal_pipeline = Pipeline([
+    ('encoder', OrdinalEncoder(categories=[
+        ['High School', 'Bachelor', 'Master', 'PhD']
+    ]))
+])
+
+onehot_pipeline = Pipeline([
+    ('encoder', OneHotEncoder(handle_unknown='ignore'))
+])
+
+# Combine into preprocessor
+preprocessor2 = ColumnTransformer([
+    ('standard', standard_pipeline, standard_cols),
+    ('minmax', minmax_pipeline, minmax_cols),
+    ('ordinal', ordinal_pipeline, ordinal_cols),
+    ('onehot', onehot_pipeline, onehot_cols)
+])
+
+# Full pipeline
+full_pipeline2 = Pipeline([
+    ('preprocessor', preprocessor2),
+    ('model', RandomForestRegressor(random_state=42))
+])
+
+# Split and train
+X2 = df2.drop('score', axis=1)
+y2 = df2['score']
+
+X2_train, X2_test, y2_train, y2_test = train_test_split(
+    X2, y2, test_size=0.2, random_state=42
+)
+
+full_pipeline2.fit(X2_train, y2_train)
+y2_pred = full_pipeline2.predict(X2_test)
+
+mae2 = mean_absolute_error(y2_test, y2_pred)
+print(f"MAE:{mae2:.2f}")
