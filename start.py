@@ -95,6 +95,6 @@ Was würde passieren, wenn ein neuer Nutzer eine Frage unbeantwortet lässt? Kom
     Dies gibt es leider in den Testdaten nicht, zudem werden betreffende Zeilen vorher mit dropna() eliminiert.
 
 Versuch, RandomForestClassifier gegen LogisticRegression auszutauschen. Ändert sich die Accuracy?
-    Die Genauigkeit steigt um knapp 1%
+    Die Genauigkeit steigt um knapp 1% von 84.03 auf 84.99%
 """
 
