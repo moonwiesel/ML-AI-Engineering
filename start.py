@@ -9,6 +9,7 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
+from sklearn.linear_model import LogisticRegression
 # ende import block
 
 df = pd.read_csv("datasource/data.csv")   # erzeugt ein dataframe von data.csv
@@ -73,6 +74,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 model = Pipeline([
     ("preprocessor", preprocessor),
     ("classifier", RandomForestClassifier(random_state=42, n_jobs=-1)),
+    #("model", LogisticRegression()),
 ])
 
 # Training
@@ -82,5 +84,17 @@ predictions = model.predict(X_test)
 # vergleich bekannte Testergebnisse mit den vom Model errechneten in %
 print("Genauigkeit\nAccuracy:", round(accuracy_score(y_test, predictions) * 100, 2), " %")
 
+"""
+Fragen:
 
+Die Klassen sind nicht gleich groß. Warum könnte Accuracy hier eine irreführende Kennzahl sein? (Das beheben wir in Live-Session 2.)
+    Die Verteilung Female/Male ist bei der Trennung von Train/Test-Daten eventuell unverhältnismäßig,
+    selbiges gilt für Links/Rechtshänder. Im Script sollte "stratify=y" dies aber berücksichtigen.
+
+Was würde passieren, wenn ein neuer Nutzer eine Frage unbeantwortet lässt? Kommt die Pipeline damit zurecht?
+    Dies gibt es leider in den Testdaten nicht, zudem werden betreffende Zeilen vorher mit dropna() eliminiert.
+
+Versuch, RandomForestClassifier gegen LogisticRegression auszutauschen. Ändert sich die Accuracy?
+    Die Genauigkeit steigt um knapp 1%
+"""
 
