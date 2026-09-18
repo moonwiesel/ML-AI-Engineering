@@ -19,6 +19,8 @@ print("Shape:", df.shape) # zeilen, spalten
 print(df["target"].value_counts()) # Aufteilung der Vorkommen von Werten in Feld target
 #print(df.head(10))
 
+# ANMERKUNG : die Daten zum Alter enthalten in Einzelfällen das Geburtsjahr. Soll das nicht breinigt werden?
+
 # teilen von Features und Target-Daten in zwei DataFrames
 X = df.drop(columns=["target"])
 y = df["target"]
@@ -33,7 +35,7 @@ numeric_features = X.drop(columns=["gender", "hand"]).columns
 # Spalten für "cat" Pipeline mit OneHotEncoder
 categorical_features = ["gender", "hand"]
 
-# definieren des preprozessors; 
+# definieren des Pre-Prozessors; 
 # strategy des Imputers bei Num-Werten ist "median" weil einzelne werte nach sichtung 
 # stark abweichen. "num" steht für die Verwendung numerischer Werte,
 # "cat" für die Verwendung klassifizierter Werte
@@ -73,8 +75,9 @@ X_train, X_test, y_train, y_test = train_test_split(
 # random_state = durch zahl definierte repruduzierbarkeit, n_jobs=-1(nutze alle CPU-Kerne, 1 = nutze einen)
 model = Pipeline([
     ("preprocessor", preprocessor),
-    ("classifier", RandomForestClassifier(random_state=42, n_jobs=-1)),
-    #("model", LogisticRegression()),
+    #("classifier", RandomForestClassifier(random_state=42, n_jobs=-1)),
+    #("model", LogisticRegression(class_weight='balanced')),
+    ("model", LogisticRegression(class_weight=None)),
 ])
 
 # Training
@@ -90,11 +93,16 @@ Fragen zum Projekt:
 Die Klassen sind nicht gleich groß. Warum könnte Accuracy hier eine irreführende Kennzahl sein? (Das beheben wir in Live-Session 2.)
     Die Verteilung Female/Male ist bei der Trennung von Train/Test-Daten eventuell unverhältnismäßig,
     selbiges gilt für Links/Rechtshänder. Im Script sollte "stratify=y" dies aber berücksichtigen.
+    Zudem besteht die Gefahr das die Mehrheit der Rechtshänder das Geschehen bestimmt. 
+    Maßnahmen: Linkshänder Duplizieren oder Rechtshänder minimieren oder beides.
+    Anwendung von SMOTE. Erfindung imaginärer Daten mittels Interpolation.
+    Bei LogisticRegression(class_weight='balanced') Gewichtung ausbalancieren.
 
 Was würde passieren, wenn ein neuer Nutzer eine Frage unbeantwortet lässt? Kommt die Pipeline damit zurecht?
     Dies gibt es leider in den Testdaten nicht, zudem werden betreffende Zeilen vorher mit dropna() eliminiert.
 
 Versuch, RandomForestClassifier gegen LogisticRegression auszutauschen. Ändert sich die Accuracy?
-    Die Genauigkeit steigt um knapp 1% von 84.03 auf 84.99%
+    Die Genauigkeit steigt um knapp 1% von 84.03 auf 84.99% ohne Angabe von class_weight='balanced' im Konstrukter,
+    bei Angabe mindert sich die Genauigkeit auf 82.15 % :-(
 """
 
