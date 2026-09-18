@@ -85,7 +85,7 @@ predictions = model.predict(X_test)
 print("Genauigkeit\nAccuracy:", round(accuracy_score(y_test, predictions) * 100, 2), " %")
 
 """
-Fragen:
+Fragen zum Projekt:
 
 Die Klassen sind nicht gleich groß. Warum könnte Accuracy hier eine irreführende Kennzahl sein? (Das beheben wir in Live-Session 2.)
     Die Verteilung Female/Male ist bei der Trennung von Train/Test-Daten eventuell unverhältnismäßig,
