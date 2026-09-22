@@ -12,7 +12,19 @@ from sklearn.metrics import accuracy_score
 from sklearn.linear_model import LogisticRegression
 # ende import block
 
+#EDA block
+
 df = pd.read_csv("datasource/data.csv")   # erzeugt ein dataframe von data.csv
+df.info()
+"""
+Die Info zeigt 19719 Zeilen und 23 Zeilen. 
+Fehlende Daten Gender (100) und Hand (24)
+Gender und Hand sind Klassifizierungsdaten (string), 
+dies schränkt die Auswahl den Models ein und erfordert ein 
+Encoding der betreffenden Daten.
+
+"""
+
 print("Shape:", df.shape) # zeilen, spalten
 df.dropna() # spalten mit fehlenden werten entfernen
 print("Shape:", df.shape) # zeilen, spalten
