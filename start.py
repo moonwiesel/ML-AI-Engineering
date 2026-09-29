@@ -52,17 +52,19 @@ y = df["target"]
 print(X.head())
 
 
-
-
 # korrigieren der Altersangaben; Alles > 100 wird auf den Median gesetzt
 m =  X["age"].median()
 X.loc[X["age"] > 100, "age"] = m
+
+"""
 
 plt.figure(figsize=(6, 4))
 sns.boxplot(y=X["age"], color="skyblue")
 plt.title("Boxplot von Age (Ausreißer als Punkte)")
 plt.ylabel("Alter")
 plt.show()
+
+"""
 
 # numeric_features: nur numerische spalten für "num" pipeline mit StandardScaler
 numeric_features = X.drop(columns=["gender", "hand"]).columns
