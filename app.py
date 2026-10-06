@@ -43,24 +43,7 @@ def switch_to_step(step):
 def update_step_from_radio():
     st.session_state.step = tab_options.index(st.session_state.radio_nav)
 
-# KANNWEG! diagram beispielsdaten 
-df_iris = sns.load_dataset("iris")
-
-# 2. Matplotlib Figure & Axis erstellen (wichtig für sauberes Layout in Streamlit)
 fig, ax = plt.subplots(figsize=(6, 4))
-
-# 3. Seaborn-Diagramm zeichnen und an 'ax' übergeben
-sns.scatterplot(
-    data=df_iris, x="sepal_length", y="sepal_width", hue="species", ax=ax
-)
-
-# Optional: Diagramm-Layout anpassen
-ax.set_title("Iris-Datensatz Scatterplot")
-#ende diagram
-
-
-
-
 
 # Anlegen und initialisieren von Session Variablen
 # Anlegen des Radio-Indexes für Header-Navigation
@@ -111,10 +94,6 @@ if st.session_state.step == 10:
         st.info('Up`s, du hast vergessen Daten zu laden :-)')
         st.button("Zurück zu Welcome und lade bitte Daten!", on_click=switch_to_step, args=(0,))
         st.stop()
-
-    st.subheader("EDA")
-
-  # df_raw = pd.DataFrame({"Produkt": ["A", "B", "C"], "Wert": [10, 20, 30]})
 
     with st.expander("📁 Äußere Ebene (Hier auf-/zuklappen)", expanded=True):
         st.write("Das ist der Inhalt der ersten Ebene.")
