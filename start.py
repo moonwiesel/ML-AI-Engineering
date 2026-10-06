@@ -10,12 +10,36 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.linear_model import LogisticRegression
+from helpers import subscripts
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
 # ende import block
 
+#EDA block
+
 df = pd.read_csv("datasource/data.csv")   # erzeugt ein dataframe von data.csv
+df.info()
+"""
+Die Info zeigt 19719 Zeilen und 23 Zeilen. 
+Fehlende Daten Gender (100) und Hand (24)
+Gender und Hand sind Klassifizierungsdaten (string), 
+dies schränkt die Auswahl den Models ein und erfordert ein 
+Encoding der betreffenden Daten. (und die Verwendung eines passenden Models)
+
+Weitere EDA Schritte (von denen einige im konktreten Beispiel nicht mehr nötig wären):
+SimpleImputer(strategy="most_frequent")
+SimpleImputer(strategy="median")
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+"""
+
 print("Shape:", df.shape) # zeilen, spalten
-df.dropna() # spalten mit fehlenden werten entfernen
-print("Shape:", df.shape) # zeilen, spalten
+# ich weiß das dropna überflüssig ist weil die Inputer die Zeilen auffüllen (je nach Strategie)
+# ich wollte aber die Möglichkeit mit darstellen und fragen ob die Strategie von dropna 
+# automatisch gewählt wird, im Gegensatz zu den Scalern (median, most_freq.) 
+# df.dropna(inplace=True) # spalten mit fehlenden werten entfernen, im selben frame (df)
+# print("Shape:", df.shape) # zeilen, spalten
 print(df["target"].value_counts()) # Aufteilung der Vorkommen von Werten in Feld target
 #print(df.head(10))
 
@@ -24,6 +48,23 @@ print(df["target"].value_counts()) # Aufteilung der Vorkommen von Werten in Feld
 # teilen von Features und Target-Daten in zwei DataFrames
 X = df.drop(columns=["target"])
 y = df["target"]
+
+print(X.head())
+
+
+# korrigieren der Altersangaben; Alles > 100 wird auf den Median gesetzt
+m =  X["age"].median()
+X.loc[X["age"] > 100, "age"] = m
+
+"""
+
+plt.figure(figsize=(6, 4))
+sns.boxplot(y=X["age"], color="skyblue")
+plt.title("Boxplot von Age (Ausreißer als Punkte)")
+plt.ylabel("Alter")
+plt.show()
+
+"""
 
 # numeric_features: nur numerische spalten für "num" pipeline mit StandardScaler
 numeric_features = X.drop(columns=["gender", "hand"]).columns
@@ -53,21 +94,20 @@ preprocessor = ColumnTransformer([
 
 print(numeric_features)
 
-# lernen (fit), transformieren (transform) und rückgabe der Daten
-X_prepared = preprocessor.fit_transform(X)
-print("\n(Rows, Cols) Before Transf.:", X.shape, " After Transf.:", X_prepared.shape, "\n")
-# 2x2 Columns kommen aus dem OneHotEncoder hinzu (After)
-
-# model definieren und testen
-
 # zunächst werden trainings und testdaten im verhältnis 80/20 
 # nach dem mischen (random_state) getrennt.
 # stratify=y sorgt dafür das die Trainings und Testdaten ausgewogen sind (zB gleich viele
-# Female/Male im Verhältnis zueinander)
+# Female/Male im Verhältnis zueinander
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
 )
 
+# lernen (fit), transformieren (transform) und rückgabe der Daten
+#X_prepared = preprocessor.fit_transform(X)
+#print("\n(Rows, Cols) Before Transf.:", X.shape, " After Transf.:", X_prepared.shape, "\n")
+# 2x2 Columns kommen aus dem OneHotEncoder hinzu (After)
+
+# model definieren und testen
 
 
 # model als pipe erstellen
@@ -76,8 +116,8 @@ X_train, X_test, y_train, y_test = train_test_split(
 model = Pipeline([
     ("preprocessor", preprocessor),
     #("classifier", RandomForestClassifier(random_state=42, n_jobs=-1)),
-    #("model", LogisticRegression(class_weight='balanced')),
-    ("model", LogisticRegression(class_weight=None)),
+    ("model", LogisticRegression(class_weight='balanced')),
+    #("model", LogisticRegression(class_weight=None)),
 ])
 
 # Training
