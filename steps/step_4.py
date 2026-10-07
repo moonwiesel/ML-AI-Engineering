@@ -12,10 +12,6 @@ def step_4():
     st.session_state["best_model"] = joblib.load("best_model.joblib")
     render_input_form()
 
-    #df = get_random_values()
-    #st.session_state["best_model"] = joblib.load("best_model.joblib")
-    #st.write(model.predict(df))
-
     return ''
 def get_random_values():
     data = {
@@ -129,14 +125,14 @@ def render_input_form():
 
     with col_a:
       input_data["age"] = st.selectbox(
-          "Alter", options=list(range(18, 90)), index=12
+          "Alter", options=list(range(1, 101)), index=45
       )
 
     with col_g:
-      input_data["gender"] = st.selectbox("Geschlecht", options=["m", "w", "d"])
+      input_data["gender"] = st.selectbox("Geschlecht", options=["male", "female"])
 
     with col_h:
-      input_data["hand"] = st.selectbox("Händigkeit", options=["rechts", "links"])
+      input_data["hand"] = st.selectbox("Händigkeit", options=["right", "left", "both"])
 
     # Absende-Button für das Formular
     submitted = st.form_submit_button("🚀 Vorhersage berechnen")
