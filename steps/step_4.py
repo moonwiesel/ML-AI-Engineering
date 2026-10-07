@@ -1,11 +1,6 @@
 import pandas as pd
-import numpy as np
 import streamlit as st
-import seaborn as sns
-import matplotlib.pyplot as plt
 import random
-import io
-import time
 import joblib
 
 def step_4():
