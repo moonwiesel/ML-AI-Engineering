@@ -8,7 +8,7 @@ from steps.step_2 import step_2 as step_2 # erzeuge clean data file
 from steps.step_3 import step_3 as step_3 # model fight
 from steps.step_4 import step_4 as step_4 # app
 from pathlib import Path # datei exisits check
-import time;
+
 
 #header anpassen (weniger padding-top, ausserdem Nutzung der gesamten Browser-Breite)
 st.set_page_config(layout="wide")
@@ -58,7 +58,12 @@ if "step" not in st.session_state:
 if "df_raw" not in st.session_state:
     st.session_state.df_raw = None
 
-tab_options = ["Start - Rohdaten laden", "EDA - Datenanalyse", "EDA - saubere Daten erzeugen", "Models (Training und Wettkampf)","(App) - Teste das Sieger-Model"]
+tab_options = ["Start - Rohdaten laden", 
+               "EDA - Datenanalyse", 
+               "EDA - saubere Daten erzeugen", 
+               "Models (Training und Wettkampf)",
+               "(App) - Teste das Sieger-Model", 
+               "Noch Meer App ;-)"]
 
 # Erstelle den Radio-Button und steuere ihn über den 'index'-Parameter
 selected = st.radio(
@@ -128,4 +133,13 @@ if st.session_state.step == 4:
         st.write(step_4())
     else:
         st.info("Tja, leider kein Model zur Umfrage gefunden ..")
-#END ####################################### st.session_state.step == 3
+#END ####################################### st.session_state.step == 4
+
+
+######################################## st.session_state.step == 4
+if st.session_state.step == 5:
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.video("https://www.youtube.com/watch?v=PXQh9jTwwoA&list=RDPXQh9jTwwoA&start_radio=1")
+        st.write("Und vielen Dank für deinen Unterricht!")
+#END ####################################### st.session_state.step == 4
