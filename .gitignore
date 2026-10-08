@@ -7,9 +7,9 @@ __pycache__/
 *.so
 
 # model
-.joblib
+*.joblib
 # data
-.csv
+*.csv
 
 # Distribution / packaging
 .Python
