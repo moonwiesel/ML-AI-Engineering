@@ -1,6 +1,5 @@
 import pandas as pd
 import streamlit as st
-import seaborn as sns
 import matplotlib.pyplot as plt
 from helpers.download_raw_data import download_project_raw_data
 from steps.step_0 import step_0 as step_0 # startseite, download data.csv
@@ -8,6 +7,7 @@ from steps.step_1 import step_1 as step_1 # eda
 from steps.step_2 import step_2 as step_2 # erzeuge clean data file
 from steps.step_3 import step_3 as step_3 # model fight
 from steps.step_4 import step_4 as step_4 # app
+from pathlib import Path # datei exisits check
 import time;
 
 #header anpassen (weniger padding-top, ausserdem Nutzung der gesamten Browser-Breite)
@@ -58,7 +58,7 @@ if "step" not in st.session_state:
 if "df_raw" not in st.session_state:
     st.session_state.df_raw = None
 
-tab_options = ["Welcome", "EDA - Datenanalyse", "EDA - saubere Daten erzeugen", "Models (Training und Wettkampf)","Test das Sieger-Model"]
+tab_options = ["Start - Rohdaten laden", "EDA - Datenanalyse", "EDA - saubere Daten erzeugen", "Models (Training und Wettkampf)","(App) - Teste das Sieger-Model"]
 
 # Erstelle den Radio-Button und steuere ihn über den 'index'-Parameter
 selected = st.radio(
@@ -98,6 +98,8 @@ if st.session_state.step == 2:
         st.button("Zurück zu Welcome und lade bitte Daten!", on_click=switch_to_step, args=(0,))
         st.stop()
 
+    st.subheader("Bereinigte Daten erstellen")
+    st.write("Klick auf den Button um, aus den Erkenntnissen der EDA, einen 'sauberen' Datensatz zu erzeugen.")
     if st.button("Mit 'Klick' auf mich erzeugst du eine saubere " \
     "Daten-File als CSV, welche im Projektordner gespeichert wird.", type="primary"):
         st.write(step_2())
@@ -107,11 +109,14 @@ if st.session_state.step == 2:
 
 ######################################## st.session_state.step == 3
 if st.session_state.step == 3:
-    if st.session_state.df_raw is None:
+    if Path("data_clear.csv").is_file() is False:
         st.info('Up`s, du hast vergessen Daten zu laden :-)')
         st.button("Zurück zu Welcome und lade bitte Daten!", on_click=switch_to_step, args=(0,))
         st.stop()
 
+    st.subheader("Finde das Supermodel")
+    st.write("Folgende Models werden am Wettbewerb teinehmen: AdaBoostClassifier, RandomForestClassifier, LogisticRegression, Support Vector Classification sowie KNN")
+    st.write('Die Models nutzen die zuvor erstellten, bereinigten Daten der Datein data_clear.csv')
     if st.button("Starte den Wettkampf ..", type="primary"):
         st.write(step_3())
 #END ####################################### st.session_state.step == 3
@@ -119,5 +124,8 @@ if st.session_state.step == 3:
 
 ######################################## st.session_state.step == 4
 if st.session_state.step == 4:
-    st.write(step_4())
+    if Path("best_model.joblib").is_file():
+        st.write(step_4())
+    else:
+        st.info("Tja, leider kein Model zur Umfrage gefunden ..")
 #END ####################################### st.session_state.step == 3

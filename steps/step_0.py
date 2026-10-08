@@ -7,7 +7,7 @@ import time;
 
 
 def step_0():
-    st.subheader("Welcome")
+    st.subheader("Start - Rohdaten laden")
     st.write("Willkommen du :-) , zur ML-Präsentation. Aufgabe ist es, " \
       "das beste Model zu finden, welches anhand vorhandener Umfragedaten " \
       "Persönlichkeitstypen vorhersagt.")
@@ -19,7 +19,7 @@ def step_0():
         st.session_state.df_raw = None
     
         for status, *data in download_project_raw_data():
-            #time.sleep(0.05)
+            time.sleep(0.05)
             if status == "progress":
                 progress, downloaded, total = data
                 # Fortschrittsbalken im Hauptskript aktualisieren

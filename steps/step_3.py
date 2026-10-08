@@ -23,10 +23,10 @@ def step_3():
 
     #auswahl set der zu verwenden model's
     models = {
-        "AdaBoost": AdaBoostClassifier(),
+        "AdaBoost": AdaBoostClassifier(random_state=42),
         "Random Forest": RandomForestClassifier(random_state=42),
-        "Logistic Regression": LogisticRegression(max_iter=1000),
-        "Support Vector Classification": SVC(),
+        "Logistic Regression": LogisticRegression(max_iter=1000, random_state=42),
+        "Support Vector Classification": SVC(random_state=42),
         "KNN": KNeighborsClassifier()
     }
 
@@ -55,7 +55,7 @@ def step_3():
     param_grid_RandomForest = {
         "classifier__n_estimators": [50, 100, 200],  # Anzahl der Bäume
         "classifier__max_depth": [1, 10, 20],  # Maximale Tiefe der Bäume
-        "classifier__min_samples_split": [2, 5],  # Mindestanzahl für Splits
+        "classifier__min_samples_split": [2, 5],  # Mindestanzahl für Splits (Probanden je Knoten) bevor nicht weiter gemacht wird
     }  
 
     param_grid_AdaBoost = {
@@ -65,11 +65,11 @@ def step_3():
     } 
 
     param_grid_LogistischeRegression = {
-        "classifier__C":[0.01, 0.1, 1.0, 10.0]
+        "classifier__C":[0.01, 0.1, 1.0, 10.0] #Stärke der "Bestrafung von Falschaussagen" Hohe Wert mehr Freirraum
     }    
 
     param_grid_SVC = {
-         "classifier__C":[0.01, 0.1, 1.0, 10.0]
+         "classifier__C":[0.01, 0.1, 1.0, 10.0] # hoher Wert = Härtere Vorgehendsweise gegen Fehler, dadurch Aufwendiger
     }
 
     param_grid_KNN = {
@@ -79,6 +79,9 @@ def step_3():
     # df für Auswertungsdaten
     result_df = pd.DataFrame(columns=["Model", "f1_macro", "accuracy", "best_params"])
     i = 0 #result grid index
+
+    # Fester Splitter für absolute Gleichheit auf allen PCs
+    cv_splitter = StratifiedKFold(n_splits=5, shuffle=True, random_state=42) # 5 Folds, random_state überall gleich
 
     #build pipes in einer for-Schleife
     # das model-Set durchlaufen
@@ -107,13 +110,14 @@ def step_3():
         )
 
         # wo bin ich?
-        st.write(f"Model lernt: {name} -> {model}")
+        dyn_text = st.empty()
+        dyn_text.write(f"Model lernt: {name} -> {model}")
 
         # starten in 5 Folds, alle Kombinationen der Hyperparameter = GridSearch
         grid_search = GridSearchCV(
         estimator=pipeline,
         param_grid=hyperparams,
-        cv=5,  # 5-fache Kreuzvalidierung
+        cv=cv_splitter,  # 5-fache Kreuzvalidierung und random_state=42
         scoring={ # score metriken definieren
             "accuracy": "accuracy",
             "f1_macro": "f1_macro",
@@ -142,14 +146,18 @@ def step_3():
           st.session_state["best_model"] = grid_search.best_estimator_
           st.session_state["best_model_name"] = name
 
+        dyn_text.markdown(f"**{name} ist bereit ..**")
+
     # serialisieren (speichern) des besten model
     joblib.dump(st.session_state["best_model"], "best_model.joblib")
+
+    st.write("Das serialisierte Model liegt im Hauptverzeichnis unter best_model.joblib")
 
     # anzeigen der einzelergebnisse
     st.dataframe(result_df.sort_values(by="f1_macro", ascending=False))
 
     # Ausgabe der Auswertung
-    st.write(f"## And the Winner is: {st.session_state["best_model_name"]}" )
+    st.write(f"## And the winner is: {st.session_state["best_model_name"]}" )
 
     st.balloons() # Freude und Heiterkeit
         

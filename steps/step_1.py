@@ -5,7 +5,6 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from helpers.download_raw_data import download_project_raw_data
 import io
-import time
 
 
 
@@ -39,6 +38,7 @@ def step_1():
             st.write('* Unser zu prognostizierendes Feld "target" ist klar sichtbar')
             st.write('* Schon jetzt, bei den ersten 20 Zeilen fällt auf, dass das Feld "hand" ' \
             'mehrheitlich, erwartbar von Rechtshändern belegt ist.')
+            st.write("* Bei der Sortierung der Daten fällt auf das 'age' ungültige Werte (>100) besitzt")
             #st.code(python_code, language="python")
 
             #st.write("Klicke hier, um zurück zu Schritt 1 zu springen:")
@@ -99,7 +99,9 @@ def step_1():
 
             st.write('Keine der Maximum-Werte überschreitet den Maximalwert 5. In den Minimumwerten stehen Nullen.')
             st.write('Eine Sichprüfung (Sortierung) ergab das lediglich eine Zeile 0 enthält. Die Zeile wird gelöscht.')
-            
+        
+        
+        with col_grid3:  
             st.subheader("Überprüfung der Altersangaben")
             st.write(f"Eine Sichtprüfung (Sortierung) ergab das unwahrscheinliche \
             Altersangaben enthalten sind. Es betrifft {(st.session_state.df_raw["age"] > 100).sum()} \

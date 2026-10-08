@@ -8,52 +8,6 @@ def step_4():
     render_input_form()
 
     return ''
-def get_random_values():
-    data = {
-      "N1": random.randint(1, 5),
-      "N2": random.randint(1, 5),
-      "N3": random.randint(1, 5),
-      "N4": random.randint(1, 5),
-      "N5": random.randint(1, 5),
-      "N6": random.randint(1, 5),
-      "N7": random.randint(1, 5),
-      "N8": random.randint(1, 5),
-      "N9": random.randint(1, 5),
-      "N10": random.randint(1, 5),
-      "E1": random.randint(1, 5),
-      "E3": random.randint(1, 5),
-      "E4": random.randint(1, 5),
-      "E5": random.randint(1, 5),
-      "E7": random.randint(1, 5),
-      "E9": random.randint(1, 5),
-      "E10": random.randint(1, 5),
-      "A4": random.randint(1, 5),
-      "C4": random.randint(1, 5),
-      "age": random.randint(10, 100),  # z.B. sinnvolleres Alter
-      "gender": get_rand_gender_string(),
-      "hand": get_rand_hand_string(),  # Klammern ergänzt!
-  }
-
-  # In ein DataFrame mit genau einer Zeile umwandeln
-    df = pd.DataFrame([data])
-    return df
-
-def get_rand_gender_string():
-    g = random.randint(0,1)
-    gender = ""
-    match g:
-        case 0: gender = "male"
-        case 1: gender = "female"
-    return gender
-
-def get_rand_hand_string():
-    g = random.randint(0,2)
-    hand = ""
-    match g:
-        case 0: hand = "right"
-        case 1: hand = "left"
-        case 2: hand = "both"
-    return hand   
 
 def render_input_form():
   st.subheader("📝 Probanden-Eingabemaske")
@@ -61,9 +15,38 @@ def render_input_form():
       "Geben Sie hier die Frageinhalte ein und bewerten Sie die Items (1 bis"
       " 5):"
   )
+  st.write("Die Vorhersage nutzt das zuvor ermittelte 'Supermodel' aus dem Hauptverzeichnis der App, 'best_model.joblib'.")
 
+
+  # Vordefinierte deutsche Beispielfragen
+  questions = {
+    # Neurotizismus (N)
+    "N1": "Ich mache mir oft Sorgen über Dinge, die passieren könnten.",
+    "N2": "Ich fühle mich oft niedergeschlagen und traurig.",
+    "N3": "Ich reagiere in stressigen Situationen schnell nervös.",
+    "N4": "Ich fühle mich oft angespannt und unruhig.",
+    "N5": "Ich reagiere leicht empfindlich auf Kritik.",
+    "N6": "Ich mache mir zu viele Gedanken über Kleinigkeiten.",
+    "N7": "Ich habe oft das Gefühl, die Kontrolle zu verlieren.",
+    "N8": "Ich ärgere mich schnell über alltägliche Hindernisse.",
+    "N9": "Ich neige dazu, pessimistisch in die Zukunft zu blicken.",
+    "N10": "Ich brauche lange, um mich von emotionalen Rückschlägen zu erholen.",
+    # Extraversion (E)
+    "E1": "Ich bin ein geselliger und kontaktfreudiger Mensch.",
+    "E3": "Ich strahle viel Energie aus und bin gerne aktiv.",
+    "E4": "Ich knüpfe leicht neue Kontakte und spreche Fremde an.",
+    "E5": "Ich bin ein eher optimistischer und fröhlicher Typ.",
+    "E7": "Ich mag es, unter vielen Menschen zu sein.",
+    "E9": "Ich rede gerne viel und halte mich ungern im Hintergrund.",
+    "E10": "Ich sprühe oft vor Tatendrang und Unternehmungslust.",
+    # Verträglichkeit (A)
+    "A4": "Ich versuche, rücksichtsvoll zu sein und Streit zu vermeiden.",
+    # Gewissenhaftigkeit (C)
+    "C4": "Ich arbeite sehr gründlich, zuverlässig und zielgerichtet.",
+  }
+  
   # Alle psychometrischen Felder aus deinen Daten
-  personality_fields = [
+  personality_fields = [  
       "N1",
       "N2",
       "N3",
@@ -89,7 +72,7 @@ def render_input_form():
   input_data = {}
 
   with st.form("prediction_form"):
-    st.markdown("### Psychometrische Fragen")
+    st.markdown("### Fragen von wenig zutreffend = 1 bis hoch = 5")
 
     for field in personality_fields:
       # Zwei Spalten: Links das Freifeld für die Frage, rechts die Radiobuttons
@@ -99,7 +82,7 @@ def render_input_form():
         # Freifeld für den Inhalt der Frage
         st.text_input(
             f"Fragetext für {field}",
-            value=f"Frage zu {field}...",
+            value=f"{questions[field]}",
             key=f"question_text_{field}",
             label_visibility="collapsed",  # Platzsparend, optional
         )
@@ -124,10 +107,10 @@ def render_input_form():
       )
 
     with col_g:
-      input_data["gender"] = st.selectbox("Geschlecht", options=["male", "female"])
+      input_data["gender"] = st.selectbox("Geschlecht", options=["Male", "Female"])
 
     with col_h:
-      input_data["hand"] = st.selectbox("Händigkeit", options=["right", "left", "both"])
+      input_data["hand"] = st.selectbox("Händigkeit", options=["Right", "Left", "Both"])
 
     # Absende-Button für das Formular
     submitted = st.form_submit_button("🚀 Vorhersage berechnen")
