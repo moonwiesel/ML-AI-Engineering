@@ -42,7 +42,7 @@ def switch_to_step(step):
     st.session_state.step = step
     st.session_state.radio_nav = tab_options[step] 
 
-# Funktion, falls der Nutzer manuell auf den Radio-Button klickt
+# Funktion, falls der Nutzer manuell auf den Radio-Button klickt 
 def update_step_from_radio():
     st.session_state.step = tab_options.index(st.session_state.radio_nav)
 
