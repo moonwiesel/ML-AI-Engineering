@@ -21,6 +21,27 @@ def step_3():
     X = df.drop(columns="target")
     y = df["target"]
 
+    """ Beispiel : zur Pipeline ohne preprozessor und transformer
+    # testnew[
+    from sklearn.preprocessing import OrdinalEncoder
+    encoder = OrdinalEncoder() # ersetzt inhalte der categorie felder direkt mit numeric, nicht sp_1, sp_2 usw
+    cols_to_encode = ['gender', 'hand'] # welche categorie-fields
+    df[cols_to_encode] = encoder.fit_transform(df[cols_to_encode]) # ausführung, direkt ins zielfeld
+
+    # Namen werden automatisch vergeben
+    from sklearn.pipeline import make_pipeline
+    pipeline = make_pipeline(
+        SimpleImputer(strategy='median'), #step1
+        StandardScaler(), #step2
+        LogisticRegression() #step3
+    )
+   
+    print(pipeline.steps)
+    #import sys
+    #sys.exit()
+    #] ende testnew
+    """
+
     #auswahl set der zu verwenden model's
     models = {
         "AdaBoost": AdaBoostClassifier(random_state=42),
